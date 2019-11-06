@@ -12,14 +12,29 @@ import br.com.caelum.jdbc.Conexao;
 public class TestaInsercao {
 
 	 public static void main(String[] args) throws SQLException {
-		 
-		String nome = "Produto tal";
-		String descricao = "Um produto com tais caracteristicas";
-		 
-		Connection conexao = Conexao.conecta();
 		
-		String sql = "insert into produto(nome,descricao) values(?,?)";
-		PreparedStatement statement = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+		Connection conexao = Conexao.conecta();
+		conexao.setAutoCommit(false);//desabilita persistencias automaticas
+		
+		try {
+			
+			String sql = "insert into produto(nome,descricao) values(?,?)";
+			PreparedStatement statement = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+		
+			adiciona("TV LCD", "32 polegadas", statement);
+			adiciona("Bluray", "Full HDMI", statement);
+			conexao.commit();
+			statement.close();			
+			
+		} catch (Exception e) {
+			conexao.rollback();
+		}
+		
+
+		conexao.close();
+	}
+
+	private static ResultSet adiciona(String nome, String descricao, PreparedStatement statement) throws SQLException {
 		statement.setString(1, nome);
 		statement.setString(2, descricao);
 		
@@ -31,9 +46,6 @@ public class TestaInsercao {
 		while(rs.next()) {
 			System.out.println("Gerou o id: "+rs.getString("id"));
 		}
-		
-		rs.close();
-		statement.close();
-		conexao.close();
+		return rs;
 	}
 }
