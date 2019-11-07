@@ -1,24 +1,24 @@
 package br.com.caelum.jdbc;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import br.com.caelum.jdbc.Conexao;
+import br.com.caelum.jdbc.dao.ProdutoDAO;
+import br.com.caelum.jdbc.modelo.Produto;
 
 public class TestaRemocao {
 	
-	public static void main(String[] args) throws SQLException {
-		Connection conexao = Conexao.conecta();
+	public static void main(String[] args){
+		try {
+			ProdutoDAO pdao = new ProdutoDAO();
+			Produto produto = new Produto();
+			
+			produto.setId(47);
+			if (pdao.deleta(produto)) {
+				System.out.println("Excluiu de boa");
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		
-		Statement statement = conexao.createStatement();
-		boolean resultado = statement.execute("delete from produto where id= 4");
 		
-		int count = statement.getUpdateCount();//pega linhas atualizadas
-		
-		System.out.println(count +" linhas atualizadas!");
-		
-		conexao.close();
 	}
 
 }
